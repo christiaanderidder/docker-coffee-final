@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: docker-coffee
+  name: docker-coffee-web
+  labels:
+    app: docker-coffee-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-coffee-web
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: docker-coffee-web
+    spec:
+      containers:
+      - name: docker-coffee-web
+        image: christiaanderidder/docker-coffee-web
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}

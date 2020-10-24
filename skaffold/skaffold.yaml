@@ -1,0 +1,26 @@
+apiVersion: skaffold/v2beta8
+kind: Config
+metadata:
+  name: docker-coffee
+build:
+  artifacts:
+    - image: christiaanderidder/docker-coffee-web
+      context: ../
+      docker: 
+        dockerfile: DockerCoffee.Web/Dockerfile
+    - image: christiaanderidder/docker-coffee-api
+      context: ../
+      docker: 
+        dockerfile: DockerCoffee.Api/Dockerfile
+    - image: christiaanderidder/docker-coffee-worker
+      context: ../
+      docker: 
+        dockerfile: DockerCoffee.Worker/Dockerfile
+    - image: christiaanderidder/docker-coffee-scheduler
+      context: ../
+      docker: 
+        dockerfile: DockerCoffee.Scheduler/Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - ..\k8s\*.yaml

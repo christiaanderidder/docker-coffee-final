@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  namespace: docker-coffee
+  name: docker-coffee-ingress
+  annotations:
+    # Fix 502 on redirect from Azure AD login
+    # See: https://andrewlock.net/fixing-nginx-upstream-sent-too-big-header-error-when-running-an-ingress-controller-in-kubernetes/
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+spec:
+  tls:
+  - hosts:
+    - www.docker-coffee.local
+    - api.docker-coffee.local
+    - rabbitmq.docker-coffee.local
+    secretName: docker-coffee-tls
+  rules:
+  - host: www.docker-coffee.local
+    http:
+      paths:
+      - backend:
+          serviceName: docker-coffee-web
+          servicePort: 80
+  - host: api.docker-coffee.local
+    http:
+      paths:
+      - backend:
+          serviceName: docker-coffee-api
+          servicePort: 80
+  - host: rabbitmq.docker-coffee.local
+    http:
+      paths:
+      - backend:
+          serviceName: docker-coffee-rabbitmq
+          servicePort: 80

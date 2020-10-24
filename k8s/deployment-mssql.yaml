@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: docker-coffee
+  name: docker-coffee-mssql
+  labels:
+    app: docker-coffee-mssql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-coffee-mssql
+  template:
+    metadata:
+      labels:
+        app: docker-coffee-mssql
+    spec:
+      containers:
+      - name: docker-coffee-mssql
+        image: mcr.microsoft.com/mssql/server
+        imagePullPolicy: Always
+        env:
+        - name: ACCEPT_EULA
+          value: x
+        - name: SA_PASSWORD
+          value: yourStrong(!)Password
+        ports:
+        - containerPort: 1433
+        resources: {}

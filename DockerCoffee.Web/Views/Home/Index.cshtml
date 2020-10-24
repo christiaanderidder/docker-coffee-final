@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    string notice = @TempData["Notice"] as string;
+}
+
+@model List<Beverage>
+
+<div class="text-center">
+    <h1 class="display-4">Docker Coffee</h1>
+    @if (!string.IsNullOrEmpty(notice))
+    {
+        <div class="alert alert-info">@notice</div>
+    }
+    <div class="card-columns">
+        @foreach (var beverage in Model)
+        {
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="coffee.jpg" alt="@beverage.Name">
+                <div class="card-body">
+                    <h5 class="card-title">@beverage.Name</h5>
+                    <p class="card-text">Stock @beverage.Stock</p>
+                    <form method="post" asp-controller="Home" asp-action="PlaceOrder">
+                        <input name="BeverageId" type="hidden" value="@beverage.Id" />
+                        <div class="input-group">
+                            <input name="Customer" class="form-control" type="text" placeholder="Customer name" />
+                            <div class="input-group-append">
+                                <input type="submit" class="btn btn-primary" value="Place Order">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>

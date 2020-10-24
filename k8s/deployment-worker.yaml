@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: docker-coffee
+  name: docker-coffee-worker
+  labels:
+    app: docker-coffee-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: docker-coffee-worker
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: docker-coffee-worker
+    spec:
+      containers:
+      - name: docker-coffee-worker
+        image: christiaanderidder/docker-coffee-worker
+        imagePullPolicy: Always
+        resources: {}

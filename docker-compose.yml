@@ -1,0 +1,73 @@
+version: '3.4'
+
+services:
+  docker-coffee-worker:
+    image: christiaanderidder/docker-coffee-worker
+    build:
+      context: .
+      dockerfile: DockerCoffee.Worker/Dockerfile
+    depends_on:
+      - docker-coffee-mssql
+      - docker-coffee-rabbitmq
+
+  docker-coffee-scheduler:
+    image: christiaanderidder/docker-coffee-scheduler
+    build:
+      context: .
+      dockerfile: DockerCoffee.Scheduler/Dockerfile
+    depends_on:
+      - docker-coffee-mssql
+      - docker-coffee-rabbitmq
+
+  docker-coffee-web:
+    image: christiaanderidder/docker-coffee-web
+    build:
+      context: .
+      dockerfile: DockerCoffee.Web/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - docker-coffee-mssql
+      - docker-coffee-rabbitmq
+
+  docker-coffee-api:
+    image: christiaanderidder/docker-coffee-api
+    build:
+      context: .
+      dockerfile: DockerCoffee.Api/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - docker-coffee-mssql
+      - docker-coffee-rabbitmq
+      
+  docker-coffee-mssql:
+    image: "mcr.microsoft.com/mssql/server"
+    user: root
+    ports: 
+      - "11433:1433"
+    volumes:
+      - docker-coffee-mssql-data:/var/opt/mssql/data
+    environment:
+      SA_PASSWORD: "yourStrong(!)Password"
+      ACCEPT_EULA: "Y"
+
+  docker-coffee-rabbitmq:
+    image: "masstransit/rabbitmq"
+    ports: 
+      - "15672:15672"
+      - "5672:5672"
+
+  docker-coffee-nginx:
+    image: christiaanderidder/docker-coffee-nginx
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - docker-coffee-web
+      - docker-coffee-api
+
+volumes:
+  docker-coffee-mssql-data:

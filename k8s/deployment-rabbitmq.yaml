@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: docker-coffee
+  name: docker-coffee-rabbitmq
+  labels:
+    app: docker-coffee-rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-coffee-rabbitmq
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: docker-coffee-rabbitmq
+    spec:
+      containers:
+      - name: docker-coffee-rabbitmq
+        image: masstransit/rabbitmq
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 15672
+        - containerPort: 5672
+        resources: {}

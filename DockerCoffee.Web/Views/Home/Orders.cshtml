@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Orders";
+}
+
+@model List<Order>
+
+<div class="text-center">
+    <h1 class="display-4">Docker Coffee</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td>Customer</td>
+                <td>Beverage</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.Customer</td>
+                    <td>@order.Beverage.Name</td>
+                    <td>@order.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
