@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-DockerCoffee.Scheduler-183AB1FD-34E0-43C5-9BD3-FA9DF2ED9AFE</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
@@ -12,9 +12,5 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Quartz" Version="3.2.2" />
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.2.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DockerCoffee.Shared\DockerCoffee.Shared.csproj" />
   </ItemGroup>
 </Project>

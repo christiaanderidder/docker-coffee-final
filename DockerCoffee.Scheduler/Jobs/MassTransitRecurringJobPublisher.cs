@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DockerCoffee.Shared.Jobs;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 using Quartz;
 
 namespace DockerCoffee.Scheduler.Jobs
@@ -13,9 +13,9 @@ namespace DockerCoffee.Scheduler.Jobs
     {
         public const string JobDataType = "Type";
         public const string JobDataMessage = "Message";
-        private readonly IBus _bus;
+        private readonly IConfiguration _bus;
 
-        public MassTransitRecurringJobPublisher(IBus bus)
+        public MassTransitRecurringJobPublisher(IConfiguration bus)
         {
             _bus = bus;
         }
@@ -31,7 +31,7 @@ namespace DockerCoffee.Scheduler.Jobs
                 Type = type,
             };
 
-            await _bus.Publish(job, context.CancellationToken);
+            //await _bus.Publish(job, context.CancellationToken);
         }
     }
 }

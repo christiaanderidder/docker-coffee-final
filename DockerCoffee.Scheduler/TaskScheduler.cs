@@ -1,4 +1,3 @@
-using DockerCoffee.Shared.Jobs;
 using DockerCoffee.Scheduler.Jobs;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,7 +17,7 @@ namespace DockerCoffee.Scheduler
             new RecurringJobSchedule()
             {
                 Type = RecurringJobType.Restock,
-                CronExpression = "0 */5 * * * ?"
+                CronExpression = "*/10 * * * * ?"
             },
         };
 
