@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DockerCoffee.Shared.Jobs;
 
 namespace DockerCoffee.Scheduler
 {

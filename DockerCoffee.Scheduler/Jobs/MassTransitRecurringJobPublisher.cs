@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using DockerCoffee.Shared.Jobs;
 using MassTransit;
-using Microsoft.Extensions.Configuration;
 using Quartz;
 
 namespace DockerCoffee.Scheduler.Jobs
@@ -15,7 +11,7 @@ namespace DockerCoffee.Scheduler.Jobs
         public const string JobDataType = "Type";
         public const string JobDataMessage = "Message";
 
-        public MassTransitRecurringJobPublisher(IConfiguration config, IBus bus)
+        public MassTransitRecurringJobPublisher(IBus bus)
         {
             _bus = bus;
         }
