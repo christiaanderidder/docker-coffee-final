@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DockerCoffee.Scheduler.Jobs;
+using DockerCoffee.Shared;
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
@@ -21,12 +23,19 @@ namespace DockerCoffee.Scheduler
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<MassTransitRecurringJobPublisher>();
-                    services.AddHostedService<TaskScheduler>();
-
+                    
                     services.AddQuartz(cfg =>
                     {
                         cfg.UseMicrosoftDependencyInjectionJobFactory();
                     });
+                    
+                    services.AddMassTransitHostedService(true);
+                    services.AddAndConfigureMassTransit(hostContext.Configuration, (cfg) =>
+                    {
+
+                    });
+                    
+                    services.AddHostedService<TaskScheduler>();
                 });
     }
 }

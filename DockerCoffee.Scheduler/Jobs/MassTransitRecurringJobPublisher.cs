@@ -11,11 +11,11 @@ namespace DockerCoffee.Scheduler.Jobs
 {
     public class MassTransitRecurringJobPublisher : IJob
     {
+        private readonly IBus _bus;
         public const string JobDataType = "Type";
         public const string JobDataMessage = "Message";
-        private readonly IConfiguration _bus;
 
-        public MassTransitRecurringJobPublisher(IConfiguration bus)
+        public MassTransitRecurringJobPublisher(IConfiguration config, IBus bus)
         {
             _bus = bus;
         }
@@ -30,8 +30,8 @@ namespace DockerCoffee.Scheduler.Jobs
                 Message = dataMap.GetString(JobDataMessage) ?? type.ToString(),
                 Type = type,
             };
-
-            //await _bus.Publish(job, context.CancellationToken);
+            
+            await _bus.Publish(job, context.CancellationToken);
         }
     }
 }
