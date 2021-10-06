@@ -1,14 +1,14 @@
 version: '3.4'
-services:
-  docker-coffee-worker:
-    environment:
-      - DOTNET_ENVIRONMENT=Development
-  docker-coffee-scheduler:
-    environment:
-      - DOTNET_ENVIRONMENT=Development
-  docker-coffee-web:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-  docker-coffee-api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+# services:
+#   docker-coffee-worker:
+#     environment:
+#       - DOTNET_ENVIRONMENT=Development
+#   docker-coffee-scheduler:
+#     environment:
+#       - DOTNET_ENVIRONMENT=Development
+#   docker-coffee-web:
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#   docker-coffee-api:
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
