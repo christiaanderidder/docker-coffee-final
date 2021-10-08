@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DockerCoffee.Shared.Configuration;
 using DockerCoffee.Shared.Jobs;
 using MassTransit;
+using MassTransit.RabbitMqTransport;
 using Microsoft.Extensions.Options;
 using Quartz;
 
@@ -31,11 +32,18 @@ namespace DockerCoffee.Scheduler.Jobs
                 Message = dataMap.GetString(JobDataMessage) ?? type.ToString(),
                 Type = type,
             };
-            
-            await _bus.Publish(job, (ctx) =>
+
+            try
             {
-                ctx.Headers.Set("x-deduplication-header", "DUP123");
-            }, context.CancellationToken);
+                await _bus.Publish(job, (ctx) =>
+                {
+                    ctx.Headers.Set("x-deduplication-header", job.GetDeduplicationHeader());
+                }, context.CancellationToken);
+            }
+            catch (MessageNotAcknowledgedException)
+            {
+                // Thrown when the deduplication plugin refuses a job
+            }
         }
     }
 }
