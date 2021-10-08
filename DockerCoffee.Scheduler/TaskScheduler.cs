@@ -7,29 +7,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DockerCoffee.Shared.Contracts;
+using DockerCoffee.Shared.Entities;
 using DockerCoffee.Shared.Jobs;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DockerCoffee.Scheduler
 {
     public class TaskScheduler : IHostedService
     {
-        private static readonly List<RecurringJobSchedule> _dummySchedules = new List<RecurringJobSchedule>()
-        {
-            new RecurringJobSchedule()
-            {
-                Type = RecurringJobType.Restock,
-                CronExpression = "*/10 * * * * ?"
-            },
-        };
-
         private readonly ILogger<TaskScheduler> _logger;
         private readonly ISchedulerFactory _schedulerFactory;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private IScheduler _scheduler;
 
-        public TaskScheduler(ILogger<TaskScheduler> logger, ISchedulerFactory schedulerFactory)
+        public TaskScheduler(ILogger<TaskScheduler> logger, ISchedulerFactory schedulerFactory, IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
             _schedulerFactory = schedulerFactory;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -37,7 +33,10 @@ namespace DockerCoffee.Scheduler
             _scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
             await _scheduler.Start(cancellationToken);
 
-            foreach (var schedule in _dummySchedules)
+            using var scope = _serviceScopeFactory.CreateScope();
+            var recurringJobScheduleService = scope.ServiceProvider.GetRequiredService<IRecurringJobScheduleService>();
+
+            foreach (var schedule in recurringJobScheduleService.GetAll())
             {
                 await _scheduler.ScheduleJob(CreateJob(schedule), CreateTrigger(schedule), cancellationToken);
             }

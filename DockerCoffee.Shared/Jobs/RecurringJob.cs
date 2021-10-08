@@ -1,4 +1,5 @@
 ﻿using System;
+using DockerCoffee.Shared.Entities;
 
 namespace DockerCoffee.Shared.Jobs
 {

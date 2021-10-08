@@ -1,10 +1,12 @@
 ﻿using System;
 using DockerCoffee.Shared.Configuration;
 using DockerCoffee.Shared.Contracts;
+using DockerCoffee.Shared.Entities;
 using DockerCoffee.Shared.Services;
 using MassTransit;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.RabbitMqTransport;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,9 +16,14 @@ namespace DockerCoffee.Shared
     {
         public static void AddDockerCoffeeShared(this IServiceCollection services)
         {
-            services.AddDbContext<CoffeeDbContext>();
+            services.AddDbContext<CoffeeDbContext>(options =>
+                options.UseSqlServer("name=ConnectionStrings:CoffeeDbContext")
+                    .EnableDetailedErrors()
+                    .EnableSensitiveDataLogging());
+            
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IBeverageService, BeverageService>();
+            services.AddScoped<IRecurringJobScheduleService, RecurringJobScheduleService>();
         }
 
         public static void AddAndConfigureMassTransit(this IServiceCollection services, IConfiguration config, Action<IServiceCollectionBusConfigurator> configure = null)

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using DockerCoffee.Shared.Contracts;
+using DockerCoffee.Shared.Entities;
 using DockerCoffee.Shared.Jobs;
 using MassTransit;
 using Microsoft.Extensions.Logging;

@@ -30,6 +30,7 @@ namespace DockerCoffee.Scheduler
                         cfg.UseMicrosoftDependencyInjectionJobFactory();
                     });
                     
+                    services.AddDockerCoffeeShared();
                     services.AddMassTransitHostedService(true);
                     services.AddAndConfigureMassTransit(hostContext.Configuration);
                     services.AddHostedService<TaskScheduler>();

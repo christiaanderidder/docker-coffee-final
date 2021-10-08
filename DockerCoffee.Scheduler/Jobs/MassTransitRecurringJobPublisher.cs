@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DockerCoffee.Shared.Configuration;
+using DockerCoffee.Shared.Entities;
 using DockerCoffee.Shared.Jobs;
 using MassTransit;
 using MassTransit.RabbitMqTransport;

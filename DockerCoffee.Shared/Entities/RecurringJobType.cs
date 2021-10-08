@@ -1,4 +1,4 @@
-﻿namespace DockerCoffee.Shared.Jobs
+﻿namespace DockerCoffee.Shared.Entities
 {
     public enum RecurringJobType
     {
