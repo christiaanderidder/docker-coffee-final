@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DockerCoffee.Scheduler.Jobs;
 using DockerCoffee.Shared;
+using DockerCoffee.Shared.Jobs;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,11 +31,7 @@ namespace DockerCoffee.Scheduler
                     });
                     
                     services.AddMassTransitHostedService(true);
-                    services.AddAndConfigureMassTransit(hostContext.Configuration, (cfg) =>
-                    {
-
-                    });
-                    
+                    services.AddAndConfigureMassTransit(hostContext.Configuration);
                     services.AddHostedService<TaskScheduler>();
                 });
     }

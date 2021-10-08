@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DockerCoffee.Shared.Configuration;
 using DockerCoffee.Shared.Contracts;
 using DockerCoffee.Shared.Services;
 using MassTransit;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
+using MassTransit.RabbitMqTransport;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,22 +19,26 @@ namespace DockerCoffee.Shared
             services.AddScoped<IBeverageService, BeverageService>();
         }
 
-        public static void AddAndConfigureMassTransit(this IServiceCollection services, IConfiguration config, Action<IServiceCollectionBusConfigurator> configure = null)
+        public static void AddAndConfigureMassTransit(this IServiceCollection services, IConfiguration config, Action<IServiceCollectionBusConfigurator, IBusRegistrationContext, IRabbitMqBusFactoryConfigurator> configure = null)
         {
             var rabbitMqConfig = config.GetSection(RabbitMqConfiguration.Section).Get<RabbitMqConfiguration>();
 
+            services.Configure<RabbitMqConfiguration>(config.GetSection(RabbitMqConfiguration.Section));
+            
             if (rabbitMqConfig == null) return;
 
             services.AddMassTransit(cfg =>
             {
-                cfg.UsingRabbitMq((context, cfg) =>
+                
+                cfg.UsingRabbitMq((ctx, busCfg) =>
                 {
-                    cfg.Host(rabbitMqConfig.Host);
-                    cfg.ConfigureEndpoints(context);
+                    //busCfg.ExchangeType = "x-message-deduplication";
+                    busCfg.Host(rabbitMqConfig.Host);
+                    //busCfg.ConfigureEndpoints(ctx);
+                    
+                    // Allows the caller to set publishers and consumers
+                    configure?.Invoke(cfg, ctx, busCfg);
                 });
-
-                // Allows the caller to set publishers and consumers
-                if (configure != null) configure(cfg);
             });
         }
     }

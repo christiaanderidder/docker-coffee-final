@@ -23,10 +23,20 @@ namespace DockerCoffee.Worker
                 {
                     services.AddDockerCoffeeShared();
                     services.AddMassTransitHostedService();
-                    services.AddAndConfigureMassTransit(hostContext.Configuration, (cfg) =>
+                    services.AddAndConfigureMassTransit(hostContext.Configuration, (cfg, ctx, busCfg) =>
                     {
+                        
                         cfg.AddConsumer<RecurringJobConsumer>();
                         cfg.AddConsumer<OrderPlacedEventConsumer>();
+                        /*busCfg.ReceiveEndpoint("recurring-jobs", e =>
+                        {
+                            e.ConfigureConsumer<RecurringJobConsumer>(ctx);
+                        });
+                        
+                        busCfg.ReceiveEndpoint("events", e =>
+                        {
+                            e.ConfigureConsumer<OrderPlacedEventConsumer>(ctx);
+                        });*/
                     });
                 });
     }

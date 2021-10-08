@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using DockerCoffee.Shared.Configuration;
 using DockerCoffee.Shared.Jobs;
 using MassTransit;
+using Microsoft.Extensions.Options;
 using Quartz;
 
 namespace DockerCoffee.Scheduler.Jobs
@@ -8,12 +11,14 @@ namespace DockerCoffee.Scheduler.Jobs
     public class MassTransitRecurringJobPublisher : IJob
     {
         private readonly IBus _bus;
+        private readonly IOptions<RabbitMqConfiguration> _rabbitMqConfig;
         public const string JobDataType = "Type";
         public const string JobDataMessage = "Message";
 
-        public MassTransitRecurringJobPublisher(IBus bus)
+        public MassTransitRecurringJobPublisher(IBus bus, IOptions<RabbitMqConfiguration> rabbitMqConfig)
         {
             _bus = bus;
+            _rabbitMqConfig = rabbitMqConfig;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -27,7 +32,11 @@ namespace DockerCoffee.Scheduler.Jobs
                 Type = type,
             };
             
-            await _bus.Publish(job, context.CancellationToken);
+            await _bus.Publish(job, (ctx) =>
+            {
+                ctx.Headers.Set("x-deduplication-header", "DUP123");
+                ctx.DestinationAddress =  new Uri($"rabbitmq://{_rabbitMqConfig.Value.Host}/tasks?type=x-message-deduplication");
+            }, context.CancellationToken);
         }
     }
 }
