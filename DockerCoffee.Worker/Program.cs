@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DockerCoffee.Shared;
+using DockerCoffee.Shared.Events;
+using DockerCoffee.Shared.Jobs;
 using DockerCoffee.Worker.Consumers;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,21 +24,13 @@ namespace DockerCoffee.Worker
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddDockerCoffeeShared();
-                    services.AddMassTransitHostedService();
-                    services.AddAndConfigureMassTransit(hostContext.Configuration, (cfg, ctx, busCfg) =>
+                    services.AddMassTransitHostedService(true);
+                    services.AddScoped<RecurringJobConsumer>();
+                    services.AddScoped<OrderPlacedEventConsumer>();
+                    services.AddAndConfigureMassTransit(hostContext.Configuration, (cfg) =>
                     {
-                        
                         cfg.AddConsumer<RecurringJobConsumer>();
                         cfg.AddConsumer<OrderPlacedEventConsumer>();
-                        /*busCfg.ReceiveEndpoint("recurring-jobs", e =>
-                        {
-                            e.ConfigureConsumer<RecurringJobConsumer>(ctx);
-                        });
-                        
-                        busCfg.ReceiveEndpoint("events", e =>
-                        {
-                            e.ConfigureConsumer<OrderPlacedEventConsumer>(ctx);
-                        });*/
                     });
                 });
     }

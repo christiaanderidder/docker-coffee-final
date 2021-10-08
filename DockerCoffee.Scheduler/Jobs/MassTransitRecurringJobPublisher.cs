@@ -35,7 +35,6 @@ namespace DockerCoffee.Scheduler.Jobs
             await _bus.Publish(job, (ctx) =>
             {
                 ctx.Headers.Set("x-deduplication-header", "DUP123");
-                ctx.DestinationAddress =  new Uri($"rabbitmq://{_rabbitMqConfig.Value.Host}/tasks?type=x-message-deduplication");
             }, context.CancellationToken);
         }
     }

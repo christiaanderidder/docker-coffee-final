@@ -19,10 +19,11 @@ namespace DockerCoffee.Shared
             services.AddScoped<IBeverageService, BeverageService>();
         }
 
-        public static void AddAndConfigureMassTransit(this IServiceCollection services, IConfiguration config, Action<IServiceCollectionBusConfigurator, IBusRegistrationContext, IRabbitMqBusFactoryConfigurator> configure = null)
+        public static void AddAndConfigureMassTransit(this IServiceCollection services, IConfiguration config, Action<IServiceCollectionBusConfigurator> configure = null)
         {
             var rabbitMqConfig = config.GetSection(RabbitMqConfiguration.Section).Get<RabbitMqConfiguration>();
 
+            services.AddTransient<IConfigureReceiveEndpoint, ConfigureDeduplicationReceiveEndpoint>();
             services.Configure<RabbitMqConfiguration>(config.GetSection(RabbitMqConfiguration.Section));
             
             if (rabbitMqConfig == null) return;
@@ -32,14 +33,28 @@ namespace DockerCoffee.Shared
                 
                 cfg.UsingRabbitMq((ctx, busCfg) =>
                 {
-                    //busCfg.ExchangeType = "x-message-deduplication";
                     busCfg.Host(rabbitMqConfig.Host);
-                    //busCfg.ConfigureEndpoints(ctx);
                     
-                    // Allows the caller to set publishers and consumers
-                    configure?.Invoke(cfg, ctx, busCfg);
+                    // Allows the caller to set consumers
+                    configure?.Invoke(cfg);
+                    
+                    busCfg.ConfigureEndpoints(ctx);
                 });
             });
+        }
+    }
+    
+    public class ConfigureDeduplicationReceiveEndpoint : IConfigureReceiveEndpoint
+    {
+        /// <summary>
+        /// Configures the receive endpoint. The given endpoint will be defined as a quorum in RabbitMQ.
+        /// </summary>
+        public void Configure(string name, IReceiveEndpointConfigurator configurator)
+        {
+            if (configurator is IRabbitMqReceiveEndpointConfigurator rabbitMqConfigurator)
+            {
+                rabbitMqConfigurator.SetQueueArgument("x-message-deduplication", true);
+            }
         }
     }
 }
