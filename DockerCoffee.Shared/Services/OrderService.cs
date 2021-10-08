@@ -50,7 +50,7 @@ namespace DockerCoffee.Shared.Services
 
                 _coffeeDbContext.SaveChanges();
 
-                _publishEndpoint.Publish(new OrderPlacedEvent(order.Id));
+                _publishEndpoint.Publish(new OrderPlacedEvent() { OrderId = order.Id });
 
                 return true;
             }
